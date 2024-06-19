@@ -1,4 +1,4 @@
-import Generadores
+import GeneradoresNumerosAleatorios
 
 def main_menu():
     while True:
