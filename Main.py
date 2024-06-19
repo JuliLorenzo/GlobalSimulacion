@@ -1,11 +1,11 @@
-import GeneradoresNumerosAleatorios
+import Generadores
 
 def main_menu():
     while True:
         print("\nMenú Principal")
         print("1. Generar Numeros Aleatorios")
         print("2. Validar Aleatoriedad de la Sucesion")
-        print("3. Generar variables aleatorias")
+        print("3. Extraer Variables Aleatorias")
         print("4. Salir")
 
         choice = input("\nSelecciona una opción: ")
@@ -29,8 +29,8 @@ def submenu_1():
         print("1. Método Congruencial Lineal Mixto")
         print("2. Método Congruencial Lineal Multiplicativo")
         print("3. Método del Cuadrado Medio")
-        #print("4. Comparar Generadores")
-        print("4. Volver al menú principal")
+        print("4. Comparar la Longitud de Periodo de 2 Generadores")
+        print("5. Volver al menú principal")
 
         choice = input("\nSeleccione el Metodo a utilizar: ")
 
@@ -45,6 +45,8 @@ def submenu_1():
             print("\nMétodo del Cuadrado Medio")
             Generadores.MetodoDelCuadradoMedio()
         elif choice == '4':
+            print("\nComparar la Longitud de Periodo de 2 Generadores")
+        elif choice == '5':
             break
         else:
             print("Opción no válida. Por favor, intenta de nuevo.")
@@ -78,9 +80,9 @@ def submenu_2():
 
 def submenu_3():
     while True:
-        print("\nSubmenú 3: Generar Variables Aleatorias")
-        print("1. Subopción 3.1")
-        print("2. Subopción 3.2")
+        print("\nSubmenú 3: Extraer Variables Aleatorias")
+        print("1. Transfromada Inversa Caso Discreto")
+        print("2. Metodo de Aceptacion Rechazo")
         print("3. Volver al menú principal")
 
         choice = input("\nSelecciona una opción: ")
