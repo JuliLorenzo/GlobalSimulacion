@@ -36,8 +36,7 @@ def submenu_1():
 
         if choice == '1':
             print("\nMétodo Congruencial Lineal Mixto")
-            Generadores.MetodoConguencialLineal()
-            break
+            Generadores.MetodoConguencialMixto()
         elif choice == '2':
             print("\nMétodo Congruencial Lineal Multiplicativo")
             Generadores.MetodoCongruencialMultiplicativo()
@@ -47,9 +46,14 @@ def submenu_1():
         elif choice == '4':
             print("\nComparar la Longitud de Periodo de 2 Generadores")
         elif choice == '5':
-            break
+            return True
         else:
             print("Opción no válida. Por favor, intenta de nuevo.")
+
+        if volverMenuPrincipal():
+            break
+        else:
+            exit("Hasta luego!")
 
 def submenu_2():
     while True:
@@ -95,6 +99,18 @@ def submenu_3():
             break
         else:
             print("Opción no válida. Por favor, intenta de nuevo.")
+
+
+def volverMenuPrincipal():
+    while True:
+        respuesta = input("\n¿Desea volver al menú principal?\nIngrese SI o NO: ").strip().upper()
+        if respuesta == "SI":
+            return True
+        elif respuesta == "NO":
+            return False
+        else:
+            print("Opción no válida. Por favor, intenta de nuevo.")
+
 
 if __name__ == "__main__":
     main_menu()

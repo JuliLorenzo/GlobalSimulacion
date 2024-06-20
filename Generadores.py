@@ -1,4 +1,6 @@
 from sympy import isprime, factorint
+from tabulate import tabulate
+
 
 def ValidarModulo():
     while True:
@@ -34,9 +36,9 @@ def ValidarIncremento(m):
 
 def cicloCompleto(periodo, m):
     if (periodo == m):
-        print("El generador es de ciclo completo")
+        print("\nEl generador es de ciclo completo")
     else:
-        print("El generador es de ciclo incompleto")
+        print("\nEl generador es de ciclo incompleto")
 
     print("Longitud de Periodo = ", periodo)
 
@@ -109,7 +111,7 @@ def SeRepite(numeros, nuevo_num):
   else:
     return False
 
-def MetodoConguencialLineal():
+def MetodoConguencialMixto():
     m = ValidarModulo()
     x = ValidarSemilla()
     a = ValidarMultiplicador(m)
@@ -117,17 +119,28 @@ def MetodoConguencialLineal():
 
     periodo = 0
     bandera = 0
+    num_aleatorio = x / m
+    results = []
 
     while(bandera != x):
         if (periodo == 0):
             bandera = x
-            print(x)
+
+        results.append((periodo + 1, num_aleatorio))
+
         x = ((a * x) + b) % m
-        periodo = periodo + 1
-        if (bandera == x): break
-        print(x)
+        periodo += 1
+        num_aleatorio = x / m
+
+        if (bandera == x):
+            break
+
+    #Imprime los resultados como una tabla
+    print("\nNumeros Aleatorios generados:")
+    print(tabulate(results, headers=["i", "Numero Aleatorio u"], tablefmt="grid", colalign=("center", "center")))
 
     cicloCompleto(periodo, m)
+
 
 
 def MetodoCongruencialMultiplicativo():
@@ -137,6 +150,7 @@ def MetodoCongruencialMultiplicativo():
 
     periodo = 0
     bandera = 0
+
 
     while(bandera != x):
         if (periodo == 0):
