@@ -58,17 +58,17 @@ def validar_chi_cuadrada(numerosaleatorios):
 def validar_aleatoriedad(numeros):
     while True:
         print("\nSeleccione la prueba estadística para validar la aleatoriedad:")
-        print("1. Prueba de Kolmogorov-Smirnov")
-        print("2. Prueba de Chi Cuadrada")
+        print("1. Prueba de Chi Cuadrada")
+        print("2. Prueba de Kolmogorov-Smirnov")
         print("3. Volver al menú principal")
 
         choice = input("\nSelecciona una opción: ")
 
         if choice == '1':
-            validar_kolmogorov(numeros)
+            validar_chi_cuadrada(numeros)
             break
         elif choice == '2':
-            validar_chi_cuadrada(numeros)
+            validar_kolmogorov(numeros)
             break
         elif choice == '3':
             break

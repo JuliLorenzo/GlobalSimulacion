@@ -1,4 +1,5 @@
 import Generadores
+import Validaciones
 
 def main_menu():
     while True:
@@ -36,24 +37,22 @@ def submenu_1():
 
         if choice == '1':
             print("\nMétodo Congruencial Lineal Mixto")
-            Generadores.MetodoConguencialMixto()
+            numeros = Generadores.MetodoConguencialMixto()
+            preguntar_validar(numeros)
         elif choice == '2':
             print("\nMétodo Congruencial Lineal Multiplicativo")
-            Generadores.MetodoCongruencialMultiplicativo()
+            numeros = Generadores.MetodoCongruencialMultiplicativo()
+            preguntar_validar(numeros)
         elif choice == '3':
             print("\nMétodo del Cuadrado Medio")
-            Generadores.MetodoDelCuadradoMedio()
+            numeros = Generadores.MetodoDelCuadradoMedio()
+            preguntar_validar(numeros)
         elif choice == '4':
             print("\nComparar la Longitud de Periodo de 2 Generadores")
         elif choice == '5':
-            return True
+            return
         else:
             print("Opción no válida. Por favor, intenta de nuevo.")
-
-        if volverMenuPrincipal():
-            break
-        else:
-            exit("Hasta luego!")
 
 def submenu_2():
     while True:
@@ -69,14 +68,21 @@ def submenu_2():
 
         if choice == '1':
             print("\nPrueba de la Chi Cuadrada")
+            numeros = Generadores.MetodoConguencialMixto()
+            Validaciones.validar_chi_cuadrada(numeros)
         elif choice == '2':
             print("\nPrueba de Kolmogorov Smirnov")
+            numeros = Generadores.MetodoConguencialMixto()
+            Validaciones.validar_kolmogorov(numeros)
         elif choice == '3':
             print("\nPrueba Serial")
+            # Implement validation logic for Prueba Serial
         elif choice == '4':
             print("\nPrueba o Test de rachas")
+            # Implement validation logic for Prueba de Rachas
         elif choice == '5':
-            print("\nVolver al menú principal")
+            print("\nPrueba de Poker")
+            # Implement validation logic for Prueba de Poker
         elif choice == '6':
             break
         else:
@@ -85,21 +91,33 @@ def submenu_2():
 def submenu_3():
     while True:
         print("\nSubmenú 3: Extraer Variables Aleatorias")
-        print("1. Transfromada Inversa Caso Discreto")
+        print("1. Transformada Inversa Caso Discreto")
         print("2. Metodo de Aceptacion Rechazo")
         print("3. Volver al menú principal")
 
         choice = input("\nSelecciona una opción: ")
 
         if choice == '1':
-            print("1. ")
+            print("Transformada Inversa Caso Discreto")
+            # Implement logic for Transformada Inversa Caso Discreto
         elif choice == '2':
-            print("2. ")
+            print("Metodo de Aceptacion Rechazo")
+            # Implement logic for Metodo de Aceptacion Rechazo
         elif choice == '3':
             break
         else:
             print("Opción no válida. Por favor, intenta de nuevo.")
 
+def preguntar_validar(numeros):
+    while True:
+        respuesta = input("\n¿Desea validar la aleatoriedad de los números generados? Ingrese SI o NO: ").strip().upper()
+        if respuesta == "SI":
+            Validaciones.validar_aleatoriedad(numeros)
+            break
+        elif respuesta == "NO":
+            break
+        else:
+            print("Opción no válida. Por favor, intenta de nuevo.")
 
 def volverMenuPrincipal():
     while True:
@@ -110,7 +128,6 @@ def volverMenuPrincipal():
             return False
         else:
             print("Opción no válida. Por favor, intenta de nuevo.")
-
 
 if __name__ == "__main__":
     main_menu()
