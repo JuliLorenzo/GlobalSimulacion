@@ -68,7 +68,7 @@ def submenu_2():
         print("1. Prueba de la Chi Cuadrada")
         print("2. Prueba de Kolmogorov Smirnov")
         print("3. Prueba o Test de rachas")
-        print("4. Prueba ....")
+        print("4. Test de autocorrelacion Ljung-Box")
         print("5. Volver al menú principal")
 
         choice = input("\nSelecciona una Prueba Estadistica: ")
@@ -82,9 +82,10 @@ def submenu_2():
         elif choice == '3':
             print("\nPrueba o Test de rachas")
             # Implement validation logic for Prueba Serial
+
         elif choice == '4':
-            print("\nPrueba ....")
-            # Implement validation logic for Prueba de Rachas
+            print("\nPrueba de autocorrelacion Ljung-Box")
+            Validaciones.validar_ljung_box()
         elif choice == '5':
             break
         else:

@@ -31,11 +31,11 @@ def metodoaceptacionrechazo():
     cantnumerosaleatorios = int(input("Ingrese la cantidad de r1 y r2 a probar: "))
 
     for _ in range(cantnumerosaleatorios):
-        numeroaleatorio = random.uniform(0, 1)  # Generar aleatorio en el rango [a, b]
+        numeroaleatorio = random.uniform(0, 1)  # Generar aleatorio en el rango [0, 1]
         numerosaleatoriosr1.append(numeroaleatorio)
 
     for _ in range(cantnumerosaleatorios):
-        numeroaleatorio = random.uniform(0, 1)  # Generar aleatorio en el rango [a, b]
+        numeroaleatorio = random.uniform(0, 1)  # Generar aleatorio en el rango [0, 1]
         numerosaleatoriosr2.append(numeroaleatorio)
 
     # Crear una lista de números entre a y b

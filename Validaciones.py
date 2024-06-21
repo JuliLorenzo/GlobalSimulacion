@@ -3,6 +3,8 @@ import scipy.stats as stats
 from scipy.stats import kstwobign
 import random
 import numpy as np
+from statsmodels.stats.diagnostic import acorr_ljungbox
+
 
 #PRUEBA KOLMOGOROV SMIRNOV
 def generacionNumeros():
@@ -158,6 +160,27 @@ def validar_kolmogorov(numerosaleatorios):
         print(f"El generador de números aleatorios NO pasa la prueba K-S con el estadístico: {estadistico} y la diferencia máxima calculada de: {maximadiferencia}")
         print(f"{maximadiferencia} > {estadistico}")
 
+
+def validar_ljung_box():
+    """
+    Valida una secuencia de números aleatorios utilizando la Prueba de Ljung-Box.
+
+    :param numeros_aleatorios: Lista de números aleatorios generados.
+    :param lags: Lista de lags para la prueba de Ljung-Box.
+    :return: DataFrame con los resultados de la prueba de Ljung-Box.
+    """
+    lags = [10]
+    numerosaleatorios = []
+    cantnumerosaleatorios = int(input("Ingrese la cantidad de numeros aleatorios "))
+
+    for _ in range(cantnumerosaleatorios):
+        numeroaleatorio = random.uniform(0, 1)  # Generar aleatorio en el rango [0, 1]
+        numerosaleatorios.append(numeroaleatorio)
+
+    ljung_box_test = acorr_ljungbox(numerosaleatorios, lags=lags, return_df=True)
+    print("Resultados de la prueba de Ljung-Box:")
+    print(ljung_box_test)
+    return ljung_box_test
 
 def validar_aleatoriedad(numeros):
     while True:
