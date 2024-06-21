@@ -67,21 +67,21 @@ def SecuenciaMaxima(a, m):
         contador = contador + 1
 
     if (contador > 0):
-      print("\nEl Generador no puede alcanzar la maxima secuencia. No cumple con la condicion de que el Multiplicativo a sea una raíz primitiva de m")
+      print("\nEl Generador no cumple con la condicion de que el Multiplicativo a sea una raíz primitiva de m. Por lo tanto, no podra alcanzar la maxima secuencia.")
 
     else:
-      print("\nEl Generador cumple todas las condiciones. Puede alcanzar la maxima secuencia")
+      print("\nEl Generador cumple con todas las condiciones. Puede alcanzar la maxima secuencia")
 
 
 def validarSecuenciaMaxima(a,m):
     print("\nDesea validar si el Generador cumple con las condiciones para alcanzar la Secuencia Maxima?")
-    validar = input("Ingrese SI o NO: ")
+    validar = input("Ingrese SI o NO: ").strip().upper()
 
     if (validar == "SI"):
         if (ValidarModuloEsPrimo(m)):
             SecuenciaMaxima(a,m)
         else:
-            print("El valor del Modulo m debe ser un numero primo")
+            print("El Generador no cumple con la condicion de que el valor del Modulo sea un numero primo. Por lo tanto, no podra alcanzar la secuencia maxima")
 
 def ValidarCantidadDigitos():
   while True:
@@ -127,22 +127,26 @@ def MetodoConguencialMixto():
     b = ValidarIncremento(m)
 
     periodo = 0
-    bandera = 0
-    num_aleatorio = x / m
+    bandera = False
+
+    numeros = []
     results = []
 
-    while(bandera != x):
+    while(bandera == False):
         if (periodo == 0):
-            bandera = x
+            numeros.append(x)
 
+        num_aleatorio = round(x / m, 3)
         results.append((periodo + 1, num_aleatorio))
 
         x = ((a * x) + b) % m
-        periodo += 1
-        num_aleatorio = x / m
 
-        if (bandera == x):
-            break
+        if SeRepite(numeros, x):
+            bandera = True
+        else:
+            numeros.append(x)
+
+        periodo += 1
 
     #Imprime los resultados como una tabla
     print("\nNumeros Aleatorios generados:")
@@ -178,22 +182,27 @@ def MetodoCongruencialMultiplicativo():
     a = ValidarMultiplicador(m)
 
     periodo = 0
-    bandera = 0
-    num_aleatorio = x / m
+    bandera = False
+
+    numeros = []
     results = []
 
-    while(bandera != x):
+    while(bandera == False):
         if (periodo == 0):
-            bandera = x
+            numeros.append(x)
 
+        num_aleatorio = round(x / m, 3)
         results.append((periodo + 1, num_aleatorio))
 
         x = (a * x) % m
-        periodo += 1
-        num_aleatorio = x / m
 
-        if (bandera == x):
-            break
+        if SeRepite(numeros, x):
+            bandera = True
+        else:
+            numeros.append(x)
+
+        periodo += 1
+
 
     #Imprime los resultados como una tabla
     print("\nNumeros Aleatorios generados:")
