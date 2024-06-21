@@ -1,5 +1,7 @@
 import Generadores
 import Validaciones
+import VariablesAleatorias
+
 
 def main_menu():
     while True:
@@ -104,15 +106,14 @@ def submenu_3():
 
         if choice == '1':
             print("Transformada Inversa Caso Discreto")
-            # Implement logic for Transformada Inversa Caso Discreto
+            VariablesAleatorias.transformada_inversa_discreta()
         elif choice == '2':
             print("Metodo de Aceptacion Rechazo")
-            # Implement logic for Metodo de Aceptacion Rechazo
+            VariablesAleatorias.metodoaceptacionrechazo()
         elif choice == '3':
             break
         else:
             print("Opción no válida. Por favor, intenta de nuevo.")
-
 def preguntar_validar(numeros):
     while True:
         respuesta = input("\n¿Desea validar la aleatoriedad de los números generados? Ingrese SI o NO: ").strip().upper()
