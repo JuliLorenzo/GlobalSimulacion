@@ -74,8 +74,7 @@ def submenu_2():
 
         if choice == '1':
             print("\nPrueba de la Chi Cuadrada")
-            numeros = Generadores.MetodoConguencialMixto()
-            Validaciones.validar_chi_cuadrada(numeros)
+            Validaciones.prueba_chi2()
         elif choice == '2':
             print("\nPrueba de Kolmogorov Smirnov")
             numeros = Generadores.MetodoConguencialMixto()
@@ -93,6 +92,11 @@ def submenu_2():
             break
         else:
             print("Opción no válida. Por favor, intenta de nuevo.")
+
+        if volverMenuPrincipal():
+            break
+        else:
+            exit("Hasta luego!")
 
 def submenu_3():
     while True:

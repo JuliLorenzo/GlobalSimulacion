@@ -1,4 +1,7 @@
-# validaciones.py
+import decimal
+import statistics
+import scipy.stats as stats
+import math
 
 def KolmogorovSmirnov(numerosaleatorios):
     cantnumerosaleatorios = len(numerosaleatorios)
@@ -74,3 +77,68 @@ def validar_aleatoriedad(numeros):
             break
         else:
             print("Opción no válida. Por favor, intenta de nuevo.")
+
+############JULI
+
+def validarIntervalo():
+    while True:
+        k = int(input("Ingrese la cantidad de intervalos: "))
+        if (k > 0):
+            return k
+        else:
+            print("Error. Ingrese un numero de intervalos mayor a cero")
+
+def generar_sucesion(k):
+    sucesion=[]
+    print("\nIngrese la cantidad de números observados en cada intervalo:")
+
+    for i in range(k):
+        print("\tIntervalo", i + 1,":")
+        cantidad = validarCantidadIngresada()
+        sucesion.append(cantidad)
+
+    return sucesion
+
+def validarCantidadIngresada():
+      while True:
+          cantidad = int(input("\tCantidad: "))
+          if (cantidad > 0):
+            return cantidad
+          else:
+            print("Error. Ingrese un numero de intervalos mayor a cero")
+
+def validarNivelSignificancia():
+    while True:
+        nivelSignificancia = float(input("Ingrese el valor de Nivel de significancia: "))
+        if (0 < nivelSignificancia < 1 ):
+            return nivelSignificancia
+        else:
+            print("Error. Ingrese un valor de Nivel de significancia mayor a 0 y menor a 1")
+
+def valorCriticoChi2(gradosLibertad, nivelSignificancia):
+    return stats.chi2.ppf(1 - nivelSignificancia, gradosLibertad)
+
+def prueba_chi2():
+      k = validarIntervalo()
+      gradosLibertad = k - 1
+      nivelSignificancia = validarNivelSignificancia()
+      sucesion = generar_sucesion(k)
+
+      valorCritico = round(valorCriticoChi2(gradosLibertad, nivelSignificancia), 3)
+      chi2_suma = 0
+
+      # Calcula la frecuencia esperada a partir de la sucesion de números observados
+      frec_esperada= statistics.mean(sucesion)
+      print("\nLa frecuencia esperada es:", frec_esperada)
+
+      #Calcula el valor chi cuadrada
+      for elemento in sucesion:
+          chi2_suma = round(chi2_suma + (((elemento - frec_esperada)**2)/frec_esperada), 3)
+
+      #Criterio de aceptación
+      if chi2_suma < valorCritico:
+          print("\nLa hipotesis se acepta. El estadístico calculado es igual a", chi2_suma," < que el estadístico de la tabla:", valorCritico)
+
+      else:
+          print("\nLa hipotesis se rechaza. El estadístico calculado es igual a", chi2_suma," > que el estadístico de la tabla:", valorCritico)
+
