@@ -2,6 +2,7 @@ import decimal
 import statistics
 import scipy.stats as stats
 import math
+from statsmodels.stats.diagnostic import acorr_ljungbox
 
 def KolmogorovSmirnov(numerosaleatorios):
     cantnumerosaleatorios = len(numerosaleatorios)
@@ -77,6 +78,17 @@ def validar_aleatoriedad(numeros):
             break
         else:
             print("Opción no válida. Por favor, intenta de nuevo.")
+
+def validar_ljung_box(numeros_aleatorios, lags=[10]):
+    """
+    Valida una secuencia de números aleatorios utilizando la Prueba de Ljung-Box.
+
+    :param numeros_aleatorios: Lista de números aleatorios generados.
+    :param lags: Lista de lags para la prueba de Ljung-Box.
+    :return: DataFrame con los resultados de la prueba de Ljung-Box.
+    """
+    ljung_box_test = acorr_ljungbox(numeros_aleatorios, lags=lags, return_df=True)
+    return ljung_box_test
 
 ############JULI
 
