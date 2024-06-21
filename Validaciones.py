@@ -169,7 +169,8 @@ def validar_ljung_box():
     :param lags: Lista de lags para la prueba de Ljung-Box.
     :return: DataFrame con los resultados de la prueba de Ljung-Box.
     """
-    lags = [10]
+    laggs = int(input("Ingrese la cantidad de lags para la prueba "))
+    lags = [laggs]
     numerosaleatorios = []
     cantnumerosaleatorios = int(input("Ingrese la cantidad de numeros aleatorios "))
 
