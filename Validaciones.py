@@ -1,84 +1,84 @@
-import decimal
 import statistics
 import scipy.stats as stats
-import math
+from scipy.stats import kstwobign
+import random
+import numpy as np
 
-def KolmogorovSmirnov(numerosaleatorios):
-    cantnumerosaleatorios = len(numerosaleatorios)
-    listaordenada = sorted(numerosaleatorios)
-    numerosrestados = []
-    contador = 1
-    for i in listaordenada:
-        FDA_Esperada = contador / cantnumerosaleatorios
-        valorabsolutoresta = abs(i - FDA_Esperada)
-        numerosrestados.append(valorabsolutoresta)
-        contador += 1
+#PRUEBA KOLMOGOROV SMIRNOV
+def generacionNumeros():
+    sucesion = []
+    print("Como desea obtener la sucesion de numeros aleatorios? Seleccione una opcion:"
+          "\n1. Ingresar los numeros aleatorios"
+          "\n2. Generar los numeros de forma aleatoria")
+    respuesta = int(input("\nOpcion seleccionada: "))
 
-    maximadiferencia = max(numerosrestados)
-    return maximadiferencia
+    print("\nIngrese la cantidad de numeros aleatorios: ", end="")
+    cantidad = validarCantidadIngresada()
 
-def chi_cuadrada(numerosaleatorios):
-    cantnumerosaleatorios = len(numerosaleatorios)
-    k = int(input("Ingrese el número de intervalos (k): "))
-    frec_esperada = cantnumerosaleatorios / k
-    intervalos = [0] * k
+    if respuesta == 1:
+        sucesion = validarSucesionNumAleatorios(cantidad)
+    elif respuesta == 2:
+        sucesion = generarSucesionAleatoria(cantidad)
 
-    for numero in numerosaleatorios:
-        indice = int(numero * k)
-        if indice == k:  # Corrección para el valor 1.0
-            indice -= 1
-        intervalos[indice] += 1
+    return sucesion
 
-    chi_cuadrado = sum(((frec_observada - frec_esperada) ** 2) / frec_esperada for frec_observada in intervalos)
-    return chi_cuadrado
+def generarSucesionAleatoria(cantidad):
+    sucesion = [random.random() for i in range(cantidad)]
+    return sucesion
 
-def validar_kolmogorov(numerosaleatorios):
-    print(numerosaleatorios)
-    estadistico = float(input("Ingrese el valor estadístico de la tabla Kolmogorov: "))
 
-    maximadiferencia = KolmogorovSmirnov(numerosaleatorios)
+def validarSucesionNumAleatorios(cantidad):
+    sucesion=[]
 
-    if maximadiferencia < estadistico:
-        print(f"El generador de números aleatorios pasa la prueba K-S con el estadístico: {estadistico} y la diferencia máxima calculada de: {maximadiferencia}")
-        print(f"{maximadiferencia} < {estadistico}")
-    else:
-        print(f"El generador de números aleatorios NO pasa la prueba K-S con el estadístico: {estadistico} y la diferencia máxima calculada de: {maximadiferencia}")
-        print(f"{maximadiferencia} > {estadistico}")
+    for i in range(cantidad):
+        print("\tNumero Aleatorio", i + 1,":", end="")
+        numeroAleatorio = validarNumeroAleatorio()
+        sucesion.append(numeroAleatorio)
 
-def validar_chi_cuadrada(numerosaleatorios):
-    print(numerosaleatorios)
-    chi_critico = float(input("Ingrese el valor crítico de la tabla Chi-Cuadrada: "))
+    return sucesion
 
-    chi_calculado = chi_cuadrada(numerosaleatorios)
-
-    if chi_calculado < chi_critico:
-        print(f"El generador de números aleatorios pasa la prueba de Chi-Cuadrada con el valor crítico: {chi_critico} y el valor calculado de: {chi_calculado}")
-        print(f"{chi_calculado} < {chi_critico}")
-    else:
-        print(f"El generador de números aleatorios NO pasa la prueba de Chi-Cuadrada con el valor crítico: {chi_critico} y el valor calculado de: {chi_calculado}")
-        print(f"{chi_calculado} > {chi_critico}")
-
-def validar_aleatoriedad(numeros):
+def validarNumeroAleatorio():
     while True:
-        print("\nSeleccione la prueba estadística para validar la aleatoriedad:")
-        print("1. Prueba de Chi Cuadrada")
-        print("2. Prueba de Kolmogorov-Smirnov")
-        print("3. Volver al menú principal")
-
-        choice = input("\nSelecciona una opción: ")
-
-        if choice == '1':
-            validar_chi_cuadrada(numeros)
-            break
-        elif choice == '2':
-            validar_kolmogorov(numeros)
-            break
-        elif choice == '3':
-            break
+        numeroAleatorio = float(input())
+        if 0 <= numeroAleatorio <= 1:
+            return numeroAleatorio
         else:
-            print("Opción no válida. Por favor, intenta de nuevo.")
+            print("Error. El numero aleatorio debe tomar valores entre 0 y 1. Reeingrese el valor: ", end="")
 
-############JULI
+def valorCriticoKS(n, nivelSignificancia):
+    return stats.ksone.ppf(1 - nivelSignificancia, n)
+    #return kstwobign.ppf(1 - nivelSignificancia) / np.sqrt(n)
+
+def KolmogorovSmirnov(sucesion):
+    if (sucesion == 1):
+        numerosAleatorios = generacionNumeros()
+    else:
+        numerosAleatorios = sucesion
+
+    nivelSignificancia = validarNivelSignificancia()
+
+    numerosAleatorios.sort()
+    i = 1
+    n = len(numerosAleatorios)
+    diferenciaMax = 0
+
+    for num in numerosAleatorios:
+        diferencia = abs(num - (i/n))
+        if diferencia > diferenciaMax:
+            diferenciaMax = diferencia
+        i += 1
+
+    valorCritico = valorCriticoKS(n, nivelSignificancia)
+
+    #Criterio de aceptación
+    if diferenciaMax < valorCritico:
+        print("\nLa hipotesis se acepta. El estadístico calculado es igual a", diferenciaMax," < que el estadístico de la tabla:", valorCritico)
+
+    else:
+        print("\nLa hipotesis se rechaza. El estadístico calculado es igual a", diferenciaMax," > que el estadístico de la tabla:", valorCritico)
+
+
+#PRUEBA CHI CUADRADA
 
 def validarIntervalo():
     while True:
@@ -105,7 +105,7 @@ def validarCantidadIngresada():
           if (cantidad > 0):
             return cantidad
           else:
-            print("Error. Ingrese un numero de intervalos mayor a cero")
+            print("Error. Ingrese un valor mayor a cero")
 
 def validarNivelSignificancia():
     while True:
@@ -118,7 +118,7 @@ def validarNivelSignificancia():
 def valorCriticoChi2(gradosLibertad, nivelSignificancia):
     return stats.chi2.ppf(1 - nivelSignificancia, gradosLibertad)
 
-def prueba_chi2():
+def PruebaChi2():
       k = validarIntervalo()
       gradosLibertad = k - 1
       nivelSignificancia = validarNivelSignificancia()
@@ -142,3 +142,39 @@ def prueba_chi2():
       else:
           print("\nLa hipotesis se rechaza. El estadístico calculado es igual a", chi2_suma," > que el estadístico de la tabla:", valorCritico)
 
+
+#VALIDACIONES -> PENDIENTE
+
+def validar_kolmogorov(numerosaleatorios):
+    print(numerosaleatorios)
+    estadistico = float(input("Ingrese el valor estadístico de la tabla Kolmogorov: "))
+
+    maximadiferencia = KolmogorovSmirnov(numerosaleatorios)
+
+    if maximadiferencia < estadistico:
+        print(f"El generador de números aleatorios pasa la prueba K-S con el estadístico: {estadistico} y la diferencia máxima calculada de: {maximadiferencia}")
+        print(f"{maximadiferencia} < {estadistico}")
+    else:
+        print(f"El generador de números aleatorios NO pasa la prueba K-S con el estadístico: {estadistico} y la diferencia máxima calculada de: {maximadiferencia}")
+        print(f"{maximadiferencia} > {estadistico}")
+
+
+def validar_aleatoriedad(numeros):
+    while True:
+        print("\nSeleccione la prueba estadística para validar la aleatoriedad:")
+        print("1. Prueba de Chi Cuadrada")
+        print("2. Prueba de Kolmogorov-Smirnov")
+        print("3. Volver al menú principal")
+
+        choice = input("\nSelecciona una opción: ")
+
+        if choice == '1':
+            #validar_chi_cuadrada(numeros)
+            break
+        elif choice == '2':
+            validar_kolmogorov(numeros)
+            break
+        elif choice == '3':
+            break
+        else:
+            print("Opción no válida. Por favor, intenta de nuevo.")

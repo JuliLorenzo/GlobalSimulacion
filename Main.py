@@ -65,30 +65,25 @@ def submenu_2():
         print("\nSubmenú 2: Pruebas estadisticas para validar la aleatoriedad de la sucesion")
         print("1. Prueba de la Chi Cuadrada")
         print("2. Prueba de Kolmogorov Smirnov")
-        print("3. Prueba Serial")
-        print("4. Prueba o Test de rachas")
-        print("5. Prueba de Poker")
-        print("6. Volver al menú principal")
+        print("3. Prueba o Test de rachas")
+        print("4. Prueba ....")
+        print("5. Volver al menú principal")
 
         choice = input("\nSelecciona una Prueba Estadistica: ")
 
         if choice == '1':
             print("\nPrueba de la Chi Cuadrada")
-            Validaciones.prueba_chi2()
+            Validaciones.PruebaChi2()
         elif choice == '2':
             print("\nPrueba de Kolmogorov Smirnov")
-            numeros = Generadores.MetodoConguencialMixto()
-            Validaciones.validar_kolmogorov(numeros)
+            Validaciones.KolmogorovSmirnov(1)
         elif choice == '3':
-            print("\nPrueba Serial")
+            print("\nPrueba o Test de rachas")
             # Implement validation logic for Prueba Serial
         elif choice == '4':
-            print("\nPrueba o Test de rachas")
+            print("\nPrueba ....")
             # Implement validation logic for Prueba de Rachas
         elif choice == '5':
-            print("\nPrueba de Poker")
-            # Implement validation logic for Prueba de Poker
-        elif choice == '6':
             break
         else:
             print("Opción no válida. Por favor, intenta de nuevo.")
