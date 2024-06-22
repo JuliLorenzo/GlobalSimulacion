@@ -36,11 +36,9 @@ def ValidarIncremento(m):
 
 def cicloCompleto(periodo, m):
     if (periodo == m):
-        print("\nEl generador es de ciclo completo")
+        print("El generador es de ciclo completo")
     else:
-        print("\nEl generador es de ciclo incompleto")
-
-    print("Longitud de Periodo = ", periodo)
+        print("El generador es de ciclo incompleto")
 
 def ValidarModuloPrimo():
     while True:
@@ -121,6 +119,7 @@ def SeRepite(numeros, nuevo_num):
 
 
 def MetodoConguencialMixto():
+    print("\nMetodo Congruencial Lineal Mixto")
     m = ValidarModulo()
     x = ValidarSemilla()
     a = ValidarMultiplicador(m)
@@ -131,6 +130,7 @@ def MetodoConguencialMixto():
 
     numeros = []
     results = []
+    numeros_aleatorios = []
 
     while(bandera == False):
         if (periodo == 0):
@@ -138,6 +138,7 @@ def MetodoConguencialMixto():
 
         num_aleatorio = round(x / m, 3)
         results.append((periodo + 1, num_aleatorio))
+        numeros_aleatorios.append(num_aleatorio)
 
         x = ((a * x) + b) % m
 
@@ -148,12 +149,13 @@ def MetodoConguencialMixto():
 
         periodo += 1
 
-    #Imprime los resultados como una tabla
     print("\nNumeros Aleatorios generados:")
     print(tabulate(results, headers=["i", "Numero Aleatorio u"], tablefmt="grid", colalign=("center", "center")))
 
+    print("\nLongitud de Periodo = ", periodo)
     cicloCompleto(periodo, m)
-    return periodo
+
+    return numeros_aleatorios
 
 def MetodoConguencialMixtoComparacion():
     m = ValidarModulo()
@@ -177,6 +179,7 @@ def MetodoConguencialMixtoComparacion():
     return periodo
 
 def MetodoCongruencialMultiplicativo():
+    print("\nMetodo Congruencial Lineal Multiplicativo")
     m = ValidarModulo()
     x = ValidarSemilla()
     a = ValidarMultiplicador(m)
@@ -186,6 +189,7 @@ def MetodoCongruencialMultiplicativo():
 
     numeros = []
     results = []
+    numeros_aleatorios = []
 
     while(bandera == False):
         if (periodo == 0):
@@ -193,6 +197,7 @@ def MetodoCongruencialMultiplicativo():
 
         num_aleatorio = round(x / m, 3)
         results.append((periodo + 1, num_aleatorio))
+        numeros_aleatorios.append(num_aleatorio)
 
         x = (a * x) % m
 
@@ -203,14 +208,13 @@ def MetodoCongruencialMultiplicativo():
 
         periodo += 1
 
-
-    #Imprime los resultados como una tabla
     print("\nNumeros Aleatorios generados:")
     print(tabulate(results, headers=["i", "Numero Aleatorio u"], tablefmt="grid", colalign=("center", "center")))
 
     validarSecuenciaMaxima(a,m)
     print("\nLongitud de Periodo = ", periodo)
 
+    return numeros_aleatorios
 
 
 def MetodoCongruencialMultiplicativoComparacion():
@@ -236,6 +240,7 @@ def MetodoCongruencialMultiplicativoComparacion():
 
 
 def MetodoDelCuadradoMedio():
+    print("\nMetodo del Cuadrado Medio")
     d = ValidarCantidadDigitos()
     x = ValidarLongitudSemilla(d)
 
@@ -243,6 +248,7 @@ def MetodoDelCuadradoMedio():
     normalizar = 10 ** d
     numeros = []
     results = []
+    numeros_aleatorios = []
 
     periodo = 0
     bandera = False
@@ -262,6 +268,7 @@ def MetodoDelCuadradoMedio():
       num_aleatorio = x / normalizar
 
       results.append((periodo + 1, num_aleatorio))
+      numeros_aleatorios.append(num_aleatorio)
 
       if SeRepite(numeros, num_central):
         bandera = True
@@ -275,7 +282,10 @@ def MetodoDelCuadradoMedio():
           break
 
     print(tabulate(results, headers=["i", "Numero Aleatorio u"], tablefmt="grid", colalign=("center", "center")))
+
     print("\nLongitud del Periodo = ", periodo)
+
+    return numeros_aleatorios
 
 def MetodoDelCuadradoMedioComparacion():
     d = ValidarCantidadDigitos()
@@ -316,7 +326,7 @@ def MetodoDelCuadradoMedioComparacion():
     return periodo
 
 def compararGeneradores():
-    print("Metodos para realizar la comparacion")
+    print("\nMetodos para realizar la comparacion")
 
     print("\n1. Método Congruencial Lineal Mixto")
     print("2. Método Congruencial Lineal Multiplicativo")

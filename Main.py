@@ -38,19 +38,15 @@ def submenu_1():
         choice = input("\nSeleccione una opcion: ")
 
         if choice == '1':
-            print("\nGenerar Numeros Aleatorios mediante el Método Congruencial Lineal Mixto")
             numeros = Generadores.MetodoConguencialMixto()
-            #preguntar_validar(numeros)
+            preguntar_validar(numeros)
         elif choice == '2':
-            print("\nGenerar Numeros Aleatorios mediante el Método Congruencial Lineal Multiplicativo")
             numeros = Generadores.MetodoCongruencialMultiplicativo()
-            #preguntar_validar(numeros)
+            preguntar_validar(numeros)
         elif choice == '3':
-            print("\nGenerar Numeros Aleatorios mediante el Método del Cuadrado Medio")
             numeros = Generadores.MetodoDelCuadradoMedio()
-            #preguntar_validar(numeros)
+            preguntar_validar(numeros)
         elif choice == '4':
-            print("\nComparar la Longitud de Periodo de 2 Generadores")
             Generadores.compararGeneradores()
         elif choice == '5':
             return
@@ -74,15 +70,11 @@ def submenu_2():
         choice = input("\nSelecciona una Prueba Estadistica: ")
 
         if choice == '1':
-            print("\nPrueba de la Chi Cuadrada")
             Validaciones.PruebaChi2()
         elif choice == '2':
-            print("\nPrueba de Kolmogorov Smirnov")
-            Validaciones.KolmogorovSmirnov(1)
+            Validaciones.KolmogorovSmirnov()
         elif choice == '3':
-            print("\nPrueba o Test de rachas")
-            # Implement validation logic for Prueba Serial
-
+            Validaciones.TestDeRachas()
         elif choice == '4':
             print("\nPrueba de autocorrelacion Ljung-Box")
             Validaciones.validar_ljung_box()
@@ -115,16 +107,39 @@ def submenu_3():
             break
         else:
             print("Opción no válida. Por favor, intenta de nuevo.")
+
 def preguntar_validar(numeros):
     while True:
-        respuesta = input("\n¿Desea validar la aleatoriedad de los números generados? Ingrese SI o NO: ").strip().upper()
+        respuesta = input("\n¿Desea validar la aleatoriedad del Generador? Ingrese SI o NO: ").strip().upper()
         if respuesta == "SI":
-            Validaciones.validar_aleatoriedad(numeros)
+            opcionesValidacion(numeros)
             break
         elif respuesta == "NO":
             break
         else:
             print("Opción no válida. Por favor, intenta de nuevo.")
+
+def opcionesValidacion(numeros):
+    print("\nValidaciones disponibles:"
+      "\n1. Evaluar la uniformidad de los números aleatorios mediante la Prueba de Kolmogorov Smirnov "
+      "\n2. Evaluar la independencia de los números aleatorios mediante el Test de Rachas"
+      "\n3. Realizar ambas validaciones")
+
+    while True:
+        respuesta = int(input("\nIngrese una opcion: "))
+        if respuesta == 1:
+            Validaciones.KolmogorovSmirnov(numeros)
+            break
+        if respuesta == 2:
+            Validaciones.TestDeRachas(numeros)
+            break
+        elif respuesta == 3:
+            Validaciones.KolmogorovSmirnov(numeros)
+            input("\nIngrese enter para continuar con la validacion de independencia de los números aleatorios mediante el Test de Rachas\n")
+            Validaciones.TestDeRachas(numeros)
+            break
+        else:
+            print("Error. Ingrese una opcion valida")
 
 def volverMenuPrincipal():
     while True:

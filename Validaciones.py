@@ -1,9 +1,86 @@
+import math
 import statistics
 import scipy.stats as stats
+from scipy.stats import norm
 from scipy.stats import kstwobign
 import random
 import numpy as np
-from statsmodels.stats.diagnostic import acorr_ljungbox
+#from statsmodels.stats.diagnostic import acorr_ljungbox
+from tabulate import tabulate
+
+#PRUEBA DE RACHAS
+
+def contarRachas(sucesion):
+    media = 0.5
+    N = len(sucesion)
+    n1 = sum(1 for num in sucesion if num >= media)
+    n2 = N - n1
+
+    rachas = 0
+    racha_actual = None
+
+    for num in sucesion:
+        if num >= media:
+            if racha_actual != '+':
+                rachas += 1
+                racha_actual = '+'
+        else:
+            if racha_actual != '-':
+                rachas += 1
+                racha_actual = '-'
+
+    return n1, n2, N, rachas
+
+def calcularZ0(n1, n2, N, rachas):
+    u = (2 * n1 * n2) / N + 1/2
+    o = math.sqrt(((2 * n1 * n2) * (2 * n1 * n2 - N)) / (N**2 * (N - 1)))
+    z0 = (rachas - u) / o
+    return z0
+
+def tipoComparacion():
+    print("Para determinar el valor critico Z, desea ingresar: \n1. Nivel de Significancia \n2. Valor Critico Z")
+    while True:
+        respuesta = int(input("\nIngrese una opcion: "))
+        if respuesta == 1:
+            nivelSignificancia = validarNivelSignificancia()
+            return norm.ppf(1 - nivelSignificancia / 2)
+        elif respuesta == 2:
+            valorCritico = float(input("Ingrese el valor del estadistico Z: "))
+            return abs(valorCritico)
+        else:
+            print("\nError. Las opciones validas son: 1 y 2")
+
+
+def TestDeRachas(sucesion=None):
+    print("\nPrueba o Test de rachas")
+    if sucesion is None:
+        numerosAleatorios = generacionNumeros()
+    else:
+        numerosAleatorios = sucesion
+
+    n1, n2, N, rachas = contarRachas(numerosAleatorios)
+    estadisticoZ0 = round(calcularZ0(n1, n2, N, rachas), 3)
+    valorCritico = round(tipoComparacion(), 4)
+
+    tabla = [
+    ["n1 (+)", n1],
+    ["n2 (-)", n2],
+    ["N", N],
+    ["Rachas", rachas],
+    ["Z0", estadisticoZ0],
+    ["Valor Crítico", f"±{valorCritico}"]
+    ]
+
+    print(tabulate(tabla, headers=["Variable", "Valor"], tablefmt="grid"))
+
+    if -valorCritico < estadisticoZ0 < valorCritico:
+        print("\nEl estadístico calculado se encuentra entre los valores cirticos de z:", -valorCritico,"<=",estadisticoZ0,"<=",valorCritico)
+        print("No hay evidencia suficiente para rechazar la hipotesis nula. Lo que sugiere que los números aleatorios son independientes.")
+
+    else:
+        print("\nEl estadistico", estadisticoZ0, "cae fuera del rango")
+        print("Se rechaza la hipótesis nula. Lo que sugiere que la secuencia de números no son independientes")
+
 
 
 #PRUEBA KOLMOGOROV SMIRNOV
@@ -14,7 +91,7 @@ def generacionNumeros():
           "\n2. Generar los numeros de forma aleatoria")
     respuesta = int(input("\nOpcion seleccionada: "))
 
-    print("\nIngrese la cantidad de numeros aleatorios: ", end="")
+    print("\nIngrese la cantidad de numeros aleatorios")
     cantidad = validarCantidadIngresada()
 
     if respuesta == 1:
@@ -25,7 +102,15 @@ def generacionNumeros():
     return sucesion
 
 def generarSucesionAleatoria(cantidad):
-    sucesion = [random.random() for i in range(cantidad)]
+    sucesion = []
+    datosTabla = []
+    for i in range(cantidad):
+        x = round(random.random(), 3)
+        datosTabla.append((i+1, x))
+        sucesion.append(x)
+
+    print("\nNumeros Aleatorios generados:")
+    print(tabulate(datosTabla, headers=["i", "Numero Aleatorio u"], tablefmt="grid", colalign=("center", "center")))
     return sucesion
 
 
@@ -51,8 +136,10 @@ def valorCriticoKS(n, nivelSignificancia):
     return stats.ksone.ppf(1 - nivelSignificancia, n)
     #return kstwobign.ppf(1 - nivelSignificancia) / np.sqrt(n)
 
-def KolmogorovSmirnov(sucesion):
-    if (sucesion == 1):
+def KolmogorovSmirnov(sucesion=None):
+    print("\nPrueba de Kolmogorov Smirnov")
+
+    if sucesion is None:
         numerosAleatorios = generacionNumeros()
     else:
         numerosAleatorios = sucesion
@@ -70,14 +157,16 @@ def KolmogorovSmirnov(sucesion):
             diferenciaMax = diferencia
         i += 1
 
-    valorCritico = valorCriticoKS(n, nivelSignificancia)
+    valorCritico = round(valorCriticoKS(n, nivelSignificancia), 3)
 
-    #Criterio de aceptación
+
     if diferenciaMax < valorCritico:
-        print("\nLa hipotesis se acepta. El estadístico calculado es igual a", diferenciaMax," < que el estadístico de la tabla:", valorCritico)
+        print("\nEl estadístico calculado es igual a", diferenciaMax," < que el estadístico de la tabla:", valorCritico)
+        print("No hay evidencia suficiente para rechazar la hipotesis nula. Lo que sugiere que la secuencia de números aleatorios sigue la distribución uniforme.")
 
     else:
-        print("\nLa hipotesis se rechaza. El estadístico calculado es igual a", diferenciaMax," > que el estadístico de la tabla:", valorCritico)
+        print("\nEl estadístico calculado es igual a", diferenciaMax," > que el estadístico de la tabla:", valorCritico)
+        print("Se rechaza la hipótesis nula. Lo que sugiere que la secuencia de números no sigue la distribución uniforme")
 
 
 #PRUEBA CHI CUADRADA
@@ -103,7 +192,7 @@ def generar_sucesion(k):
 
 def validarCantidadIngresada():
       while True:
-          cantidad = int(input("\tCantidad: "))
+          cantidad = int(input("Cantidad: "))
           if (cantidad > 0):
             return cantidad
           else:
@@ -121,44 +210,32 @@ def valorCriticoChi2(gradosLibertad, nivelSignificancia):
     return stats.chi2.ppf(1 - nivelSignificancia, gradosLibertad)
 
 def PruebaChi2():
-      k = validarIntervalo()
-      gradosLibertad = k - 1
-      nivelSignificancia = validarNivelSignificancia()
-      sucesion = generar_sucesion(k)
+    print("\nPrueba de la Chi Cuadrada")
+    k = validarIntervalo()
+    gradosLibertad = k - 1
+    nivelSignificancia = validarNivelSignificancia()
+    sucesion = generar_sucesion(k)
 
-      valorCritico = round(valorCriticoChi2(gradosLibertad, nivelSignificancia), 3)
-      chi2_suma = 0
+    valorCritico = round(valorCriticoChi2(gradosLibertad, nivelSignificancia), 3)
+    chi2_suma = 0
 
-      # Calcula la frecuencia esperada a partir de la sucesion de números observados
-      frec_esperada= statistics.mean(sucesion)
-      print("\nLa frecuencia esperada es:", frec_esperada)
+    # Calcula la frecuencia esperada a partir de la sucesion de números observados
+    frec_esperada= statistics.mean(sucesion)
+    print("\nLa frecuencia esperada es:", frec_esperada)
 
-      #Calcula el valor chi cuadrada
-      for elemento in sucesion:
-          chi2_suma = round(chi2_suma + (((elemento - frec_esperada)**2)/frec_esperada), 3)
+    #Calcula el valor chi cuadrada
+    for elemento in sucesion:
+        chi2_suma = round(chi2_suma + (((elemento - frec_esperada)**2)/frec_esperada), 3)
 
-      #Criterio de aceptación
-      if chi2_suma < valorCritico:
-          print("\nLa hipotesis se acepta. El estadístico calculado es igual a", chi2_suma," < que el estadístico de la tabla:", valorCritico)
+    #Criterio de aceptación
+    if chi2_suma < valorCritico:
+        print("\nEl estadístico calculado es igual a", chi2_suma," < que el estadístico de la tabla:", valorCritico)
+        print("No hay evidencia suficiente para rechazar la hipotesis nula. Lo que sugiere que la secuencia de números aleatorios sigue la distribución uniforme.")
 
-      else:
-          print("\nLa hipotesis se rechaza. El estadístico calculado es igual a", chi2_suma," > que el estadístico de la tabla:", valorCritico)
-
-
-#VALIDACIONES -> PENDIENTE
-
-def validar_kolmogorov(numerosaleatorios):
-    print(numerosaleatorios)
-    estadistico = float(input("Ingrese el valor estadístico de la tabla Kolmogorov: "))
-
-    maximadiferencia = KolmogorovSmirnov(numerosaleatorios)
-
-    if maximadiferencia < estadistico:
-        print(f"El generador de números aleatorios pasa la prueba K-S con el estadístico: {estadistico} y la diferencia máxima calculada de: {maximadiferencia}")
-        print(f"{maximadiferencia} < {estadistico}")
     else:
-        print(f"El generador de números aleatorios NO pasa la prueba K-S con el estadístico: {estadistico} y la diferencia máxima calculada de: {maximadiferencia}")
-        print(f"{maximadiferencia} > {estadistico}")
+        print("\El estadístico calculado es igual a", chi2_suma," > que el estadístico de la tabla:", valorCritico)
+        print("Se rechaza la hipótesis nula. Lo que sugiere que la secuencia de números no sigue la distribución uniforme")
+
 
 
 def validar_ljung_box():
@@ -183,22 +260,4 @@ def validar_ljung_box():
     print(ljung_box_test)
     return ljung_box_test
 
-def validar_aleatoriedad(numeros):
-    while True:
-        print("\nSeleccione la prueba estadística para validar la aleatoriedad:")
-        print("1. Prueba de Chi Cuadrada")
-        print("2. Prueba de Kolmogorov-Smirnov")
-        print("3. Volver al menú principal")
 
-        choice = input("\nSelecciona una opción: ")
-
-        if choice == '1':
-            #validar_chi_cuadrada(numeros)
-            break
-        elif choice == '2':
-            validar_kolmogorov(numeros)
-            break
-        elif choice == '3':
-            break
-        else:
-            print("Opción no válida. Por favor, intenta de nuevo.")
