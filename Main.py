@@ -57,7 +57,6 @@ def submenu_1():
             break
         else:
             exit("Hasta luego!")
-
 def submenu_2():
     while True:
         print("\nSubmenú 2: Pruebas estadisticas para validar la aleatoriedad de la sucesion")
@@ -76,8 +75,7 @@ def submenu_2():
         elif choice == '3':
             Validaciones.TestDeRachas()
         elif choice == '4':
-            print("\nPrueba de autocorrelacion Ljung-Box")
-            Validaciones.validar_ljung_box()
+            Validaciones.LjungBox()
         elif choice == '5':
             break
         else:
@@ -98,15 +96,18 @@ def submenu_3():
         choice = input("\nSelecciona una opción: ")
 
         if choice == '1':
-            print("Transformada Inversa Caso Discreto")
             VariablesAleatorias.transformada_inversa_discreta()
         elif choice == '2':
-            print("Metodo de Aceptacion Rechazo")
             VariablesAleatorias.metodoaceptacionrechazo()
         elif choice == '3':
             break
         else:
             print("Opción no válida. Por favor, intenta de nuevo.")
+
+        if volverMenuPrincipal():
+            break
+        else:
+            exit("Hasta luego!")
 
 def preguntar_validar(numeros):
     while True:

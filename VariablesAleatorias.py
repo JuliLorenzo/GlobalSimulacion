@@ -1,16 +1,31 @@
 import random
 
-def metodoaceptacionrechazo():
-    print("Se utilizara G(x)=1")
+from tabulate import tabulate
 
-    # Validar el valor de a y b
+import Validaciones
+
+def validarIntervaloAB():
+    a = float(input("\nIngresa el valor del extremo inferior a: "))
     while True:
-        a = float(input("Ingresa el valor del extremo a: "))
-        b = float(input("Ingresa el valor del extremo b: "))
+        b = float(input("Ingresa el valor del extremo superior b: "))
         if b <= a:
-            print("Error: el valor de b debe ser mayor que el valor de a. Por favor, inténtelo de nuevo.")
+            print("ERROR: el valor de b debe ser mayor que el valor de a. Ingrese un nuevo valor para b:", end="")
         else:
             break
+    return a,b
+
+def validarCantidadIgual(lista1, lista2):
+    while len(lista1) != len(lista2):
+        print("\nERROR: Ambas listas deben tener la misma cantidad de numeros aleatorios.")
+        print("Por favor, vuelve a ingresar la segunda sucesion de Numeros Aleatorios r2.\n")
+        lista2 = Validaciones.generacionNumeros()
+    return lista2
+
+def metodoaceptacionrechazo():
+    print("\nMetodo de Aceptacion Rechazo")
+    print("Se utilizara G(x)=1")
+
+    a, b = validarIntervaloAB()
 
     # Validar el valor de la pendiente
     while True:
@@ -21,22 +36,13 @@ def metodoaceptacionrechazo():
             break
 
     # Mostrar los valores ingresados
+    valores_ingresados = [
+        ["a", a],
+        ["b", b],
+        ["f(x)", f"{pendiente} * x"]
+    ]
     print("\nValores ingresados:")
-    print(f"A = {a}")
-    print(f"B = {b}")
-    print(f"Funcion Densidad = {pendiente} * x")
-
-    numerosaleatoriosr1 = []
-    numerosaleatoriosr2 = []
-    cantnumerosaleatorios = int(input("Ingrese la cantidad de r1 y r2 a probar: "))
-
-    for _ in range(cantnumerosaleatorios):
-        numeroaleatorio = random.uniform(0, 1)  # Generar aleatorio en el rango [0, 1]
-        numerosaleatoriosr1.append(numeroaleatorio)
-
-    for _ in range(cantnumerosaleatorios):
-        numeroaleatorio = random.uniform(0, 1)  # Generar aleatorio en el rango [0, 1]
-        numerosaleatoriosr2.append(numeroaleatorio)
+    print(tabulate(valores_ingresados, headers=["Variable", "Valor"], tablefmt="grid"))
 
     # Crear una lista de números entre a y b
     numeros = [a + i * (b - a) / 10 for i in range(11)]
@@ -56,6 +62,12 @@ def metodoaceptacionrechazo():
         print(f"|  {x:.2f}  |  {valor:.2f}  |")
     print("=================")
 
+    print("\nPrimera sucesion de Numeros Aleatorios r1")
+    numerosaleatoriosr1 = Validaciones.generacionNumeros()
+    print("\nSegunda sucesion de Numeros Aleatorios r2")
+    numerosaleatoriosr2 = Validaciones.generacionNumeros()
+    numerosaleatoriosr2 = validarCantidadIgual(numerosaleatoriosr1,numerosaleatoriosr2)
+
     valoresaleatoriosx = []
     for num_aleatorio in numerosaleatoriosr1:
         vax = a + (b - a) * num_aleatorio
@@ -66,76 +78,136 @@ def metodoaceptacionrechazo():
         fx = pendiente * vax
         listafx.append(fx)
 
-    efesobreM = []
+    fsobreM = []
     for fx in listafx:
         fxsobrem = fx / M
-        efesobreM.append(fxsobrem)
+        fsobreM.append(fxsobrem)
 
-    # Implementación del método de aceptación-rechazo con mensajes
-    aceptaciones = 0
-    print("\nResultados de aceptación-rechazo:")
-    for i in range(cantnumerosaleatorios):
-        if listafx[i] > numerosaleatoriosr2[i]:
-            aceptaciones += 1
-            print(f"r1: {numerosaleatoriosr1[i]:.2f}, r2: {numerosaleatoriosr2[i]:.2f} -> Aceptado")
+    cantNumerosAleatorios = len(numerosaleatoriosr1)
+    resultados = []
+
+    for i in range(cantNumerosAleatorios):
+        if fsobreM[i] >= numerosaleatoriosr2[i]:
+            resultados.append("Aceptado")
         else:
-            print(f"r1: {numerosaleatoriosr1[i]:.2f}, r2: {numerosaleatoriosr2[i]:.2f} -> Rechazado")
+            resultados.append("Rechazado")
 
-    # Mostrar resultados
+    tabla = []
+    for i in range(cantNumerosAleatorios):
+        tabla.append([numerosaleatoriosr1[i], numerosaleatoriosr2[i], valoresaleatoriosx[i], listafx[i], fsobreM[i], resultados[i]])
+
+    print("\nResultados de aceptación-rechazo:")
+    print(tabulate(tabla, headers=["r1", "r2", "vax", "f(x)", "f(x)/M", "Resultado"], tablefmt="grid", colalign=("center", "center")))
+
+    aceptaciones = resultados.count("Aceptado")
     print(f"\nNúmero total de aceptaciones: {aceptaciones}")
-    print(f"\nNúmero total de rechazos: {cantnumerosaleatorios - aceptaciones}")
+    print(f"Número total de rechazos: {cantNumerosAleatorios - aceptaciones}")
+
+
+def validarIntervalo():
+    while True:
+        k = int(input("Ingrese la cantidad de intervalos: "))
+        if (k > 0):
+            return k
+        else:
+            print("Error. Ingrese un numero de intervalos mayor a cero")
+
+def validarValor():
+    while True:
+      x = int(input())
+      if (x >= 0):
+        return x
+      else:
+        print("Error. Ingrese una cantidad mayor o igual a cero")
+
+def validarFrecuenciaAbsoluta(k):
+    print("\nIngrese la cantidad de observaciones (FA) de cada intervalo")
+    fAbsolutaList = []
+    sumaFA = 0
+
+    for i in range(k):
+        print("\tIntervalo", i + 1,":", end="")
+        fAbsoluta = validarValor()
+        fAbsolutaList.append(fAbsoluta)
+        sumaFA += fAbsoluta
+
+    return fAbsolutaList, sumaFA
+
+def calculoFrecuenciaRelativa(FAbsolutas, Total):
+    fRelativaList = []
+    for i in FAbsolutas:
+        fRelativa = i/Total
+        fRelativaList.append(fRelativa)
+    return fRelativaList
+
+def imprimir_tabla_frecuencias(intervalos, frecuenciasRelativas, frecuenciasAcumuladas):
+    print("\nTabla de valores de Frecuencias:")
+    print("------------------------------------------------------------")
+    print(f"|{' Intervalo ':^11}|{' Frecuencia Relativa ':^22}|{' Frecuencia Acumulada ':^23}|")
+    print("------------------------------------------------------------")
+    for i in range(intervalos):
+        print(f"|{i + 1:^11}|{frecuenciasRelativas[i]:^22.3f}|{frecuenciasAcumuladas[i]:^23.3f}|")
+    print("-------------------------------------------------------------")
+
+def imprimir_tabla_numeros_aleatorios(numerosAleatorios, frecuenciasAcumuladas):
+    print("\nTabla de extracción de la variable aleatoria:")
+    print("-------------------------")
+    print("|  i  |    u    |   x   |")
+    print("-------------------------")
+    for i, u in enumerate(numerosAleatorios):
+        for j, fAcum in enumerate(frecuenciasAcumuladas):
+            if u <= fAcum:
+                x = j + 1
+                print(f"| {i + 1:^3} | {u:^7.3f} | {x:^5} |")
+                break
+    print("-------------------------")
+
+def imprimir_tabla_variables_aleatorias_por_intervalo(conteoIntervalos):
+    print("\nValores de variables aleatorias por intervalos:")
+    print("----------------------------")
+    print(f"|{' Intervalo ':^11}|{' Conteo ':^10}|")
+    print("----------------------------")
+    for i, conteo in enumerate(conteoIntervalos):
+        print(f"|{i + 1:^11}|{conteo:^10}|")
+    print("----------------------------")
+
+def imprimir_tabla_observaciones(fAbsolutaList):
+    print("\nTabla de observaciones por intervalo:")
+    print("------------------------------------")
+    print(f"|{' Intervalo ':^11}|{' Frecuencia Absoluta ':^20}|")
+    print("------------------------------------")
+    for i, fAbsoluta in enumerate(fAbsolutaList):
+        print(f"|{i + 1:^11}|{fAbsoluta:^20}|")
+    print("------------------------------------")
 
 ## Metodo transformada inversa discreta
 def transformada_inversa_discreta():
-    num_intervalos = 0
-    while num_intervalos <= 0:
-        num_intervalos = int(input("Ingrese la cantidad de intervalos (debe ser mayor a 0): "))
-        if num_intervalos <= 0:
-            print("Error: El número de intervalos debe ser mayor a 0.")
+    print("\nTransformada Inversa Caso Discreto")
+    intervalos = validarIntervalo()
 
-    frecuencia_relativa = []
-    suma_frecuencia_relativa = 0
+    frecuenciasAbsolutas, totalObs = validarFrecuenciaAbsoluta(intervalos)
+    frecuenciasRelativas = calculoFrecuenciaRelativa(frecuenciasAbsolutas, totalObs)
 
-    print("\nPor favor, ingrese la frecuencia relativa para cada intervalo:")
-    while suma_frecuencia_relativa != 1.0:
-        frecuencia_relativa = []
-        suma_frecuencia_relativa = 0
-        for i in range(num_intervalos):
-            frec_rel = float(input(f"Intervalo {i+1}: "))
-            frecuencia_relativa.append(frec_rel)
-            suma_frecuencia_relativa += frec_rel
+    imprimir_tabla_observaciones(frecuenciasAbsolutas)
 
-        if suma_frecuencia_relativa != 1.0:
-            print("Error: La suma de las frecuencias relativas debe ser igual a 1.0. Por favor, ingrese nuevamente las frecuencias relativas.")
+    frecuenciasAcumuladas = [round(sum(frecuenciasRelativas[:i+1]), 3) for i in range(intervalos)]
 
-    frecuencia_absoluta = [round(sum(frecuencia_relativa[:i+1]) * 100, 2) for i in range(num_intervalos)]
+    imprimir_tabla_frecuencias(intervalos, frecuenciasRelativas, frecuenciasAcumuladas)
+    print()
+    numerosAleatorios = Validaciones.generacionNumeros()
 
-    print("\nTabla de valores:")
-    print("Intervalo | Frecuencia relativa | Frecuencia absoluta")
-    for i in range(num_intervalos):
-        print(f"  {i+1}\t|\t   {frecuencia_relativa[i]}\t|\t   {frecuencia_absoluta[i]/100}")
+    imprimir_tabla_numeros_aleatorios(numerosAleatorios, frecuenciasAcumuladas)
 
-    variables_aleatorias = [round(random.random(), 3) for _ in range(10)]
-    variables_aleatorias.sort()
-
-    print("\nTabla de variables aleatorias generadas:")
-    print("n\t|\t   u\t|\t   Valor")
-    for i, u in enumerate(variables_aleatorias):
-        for j, freq_abs in enumerate(frecuencia_absoluta):
-            if u * 100 <= freq_abs:
-                print(f"  {i+1}\t|\t   {u}\t|\t   {j+1}")
+    conteoIntervalos = [0] * intervalos
+    for u in numerosAleatorios:
+        for j, fAcum in enumerate(frecuenciasAcumuladas):
+            if u <= fAcum:
+                conteoIntervalos[j] += 1
                 break
 
-    conteo_intervalos = [0] * num_intervalos
-    for u in variables_aleatorias:
-        for j, freq_abs in enumerate(frecuencia_absoluta):
-            if u * 100 <= freq_abs:
-                conteo_intervalos[j] += 1
-                break
+    imprimir_tabla_variables_aleatorias_por_intervalo(conteoIntervalos)
 
-    print("\nValores de variables aleatorias por intervalos:")
-    for i, conteo in enumerate(conteo_intervalos):
-        print(f"Intervalo {i+1}: {conteo}")
+
 
 
 

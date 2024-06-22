@@ -5,8 +5,9 @@ from scipy.stats import norm
 from scipy.stats import kstwobign
 import random
 import numpy as np
-#from statsmodels.stats.diagnostic import acorr_ljungbox
+from statsmodels.stats.diagnostic import acorr_ljungbox
 from tabulate import tabulate
+import pandas as pd
 
 #PRUEBA DE RACHAS
 
@@ -85,21 +86,22 @@ def TestDeRachas(sucesion=None):
 
 #PRUEBA KOLMOGOROV SMIRNOV
 def generacionNumeros():
-    sucesion = []
-    print("Como desea obtener la sucesion de numeros aleatorios? Seleccione una opcion:"
-          "\n1. Ingresar los numeros aleatorios"
-          "\n2. Generar los numeros de forma aleatoria")
-    respuesta = int(input("\nOpcion seleccionada: "))
+    while True:
+        print("Como desea obtener la sucesion de numeros aleatorios? Seleccione una opcion:"
+              "\n1. Ingresar los numeros aleatorios"
+              "\n2. Generar los numeros de forma aleatoria")
+        respuesta = int(input("\nOpcion seleccionada: "))
 
-    print("\nIngrese la cantidad de numeros aleatorios")
-    cantidad = validarCantidadIngresada()
+        print("\nIngrese la cantidad de numeros aleatorios")
+        cantidad = validarCantidadIngresada()
 
-    if respuesta == 1:
-        sucesion = validarSucesionNumAleatorios(cantidad)
-    elif respuesta == 2:
-        sucesion = generarSucesionAleatoria(cantidad)
+        if respuesta == 1:
+            return validarSucesionNumAleatorios(cantidad)
+        elif respuesta == 2:
+            return generarSucesionAleatoria(cantidad)
+        else:
+            print("Error. Ingrese una opcion valida")
 
-    return sucesion
 
 def generarSucesionAleatoria(cantidad):
     sucesion = []
@@ -236,28 +238,61 @@ def PruebaChi2():
         print("\El estadístico calculado es igual a", chi2_suma," > que el estadístico de la tabla:", valorCritico)
         print("Se rechaza la hipótesis nula. Lo que sugiere que la secuencia de números no sigue la distribución uniforme")
 
+def validarCantidadLags(cantNumeros):
+    while True:
+        lags = int(input("\nIngrese la cantidad de lags: "))
+        if 0 < lags < cantNumeros:
+            return lags
+        else:
+            print("Error. La cantidad de lags debe ser mayor a 0 y menor o igual a",cantNumeros,"(cantidad de numeros aleatorios)")
 
+def imprimirResultados(Qestadistico, valorCritico, pValor):
+    print("\nResultados de la prueba de Ljung-Box:")
+    print("-" * 47)  # Línea horizontal de separación
+    print(f"| {'Métrica':^30} | {'Valor':^12} |")
+    print("-" * 47)  # Línea horizontal de separación
+    print(f"| {'Estadístico Q':^30} | {Qestadistico:.3f} |")
+    print(f"| {'Valor crítico chi-cuadrado':^30} | {valorCritico:.3f} |")
+    print(f"| {'P-valor':^30} | {pValor:.3f} |")
+    print("-" * 47)  # Línea horizontal de separación
 
-def validar_ljung_box():
-    """
-    Valida una secuencia de números aleatorios utilizando la Prueba de Ljung-Box.
+def LjungBox():
+    print("\nPrueba de Autocorrelacion Ljung-Box")
+    numerosAleatorios = generacionNumeros()
+    cantNumeros = len(numerosAleatorios)
 
-    :param numeros_aleatorios: Lista de números aleatorios generados.
-    :param lags: Lista de lags para la prueba de Ljung-Box.
-    :return: DataFrame con los resultados de la prueba de Ljung-Box.
-    """
-    laggs = int(input("Ingrese la cantidad de lags para la prueba "))
-    lags = [laggs]
-    numerosaleatorios = []
-    cantnumerosaleatorios = int(input("Ingrese la cantidad de numeros aleatorios "))
+    lags = validarCantidadLags(cantNumeros)
+    nivelSignificancia = validarNivelSignificancia()
 
-    for _ in range(cantnumerosaleatorios):
-        numeroaleatorio = random.uniform(0, 1)  # Generar aleatorio en el rango [0, 1]
-        numerosaleatorios.append(numeroaleatorio)
+    resultado = acorr_ljungbox(numerosAleatorios, lags=lags)
 
-    ljung_box_test = acorr_ljungbox(numerosaleatorios, lags=lags, return_df=True)
-    print("Resultados de la prueba de Ljung-Box:")
-    print(ljung_box_test)
-    return ljung_box_test
+    if isinstance(resultado, pd.DataFrame):
+        resultado = resultado.iloc[-1]
+
+    Qestadistico = round(resultado['lb_stat'], 3)
+    pValor = round(resultado['lb_pvalue'], 3)
+    gradosLibertad = lags
+
+    valorCritico = round(valorCriticoChi2(gradosLibertad, nivelSignificancia), 3)
+
+    imprimirResultados(Qestadistico, valorCritico, pValor)
+
+    if Qestadistico < valorCritico:
+        print("\nEl estadístico calculado es igual a", Qestadistico,"< que el estadístico de la tabla:", valorCritico)
+        print("Por lo tanto, no hay evidencia suficiente para rechazar la hipotesis nula de no autocorrelacion")
+
+    else:
+        print("\nEl estadístico calculado es igual a", Qestadistico," > que el estadístico de la tabla:", valorCritico)
+        print("Se rechaza la hipótesis nula. Lo que sugiere que la secuencia de números aleatorios presenta una autocorrelacion significativa")
+
+    confianza = round((1 - nivelSignificancia) * 100, 3)
+
+    print("\nInterpretacion p-valor:")
+    if pValor > nivelSignificancia:
+        print("El p-valor obtenido es igual a", pValor, "> que el Nivel de Significancia elegido α =",nivelSignificancia)
+        print("Esto implica que no se rechaza la hipótesis nula con un",confianza,"% de confianza.")
+    else:
+        print("El p-valor obtenido es igual a", pValor, "< que el Nivel de Significancia elegido α =",nivelSignificancia)
+        print("Esto implica que se rechaza la hipótesis nula con un",confianza,"% de confianza.")
 
 
