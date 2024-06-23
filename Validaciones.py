@@ -2,9 +2,7 @@ import math
 import statistics
 import scipy.stats as stats
 from scipy.stats import norm
-from scipy.stats import kstwobign
 import random
-import numpy as np
 from statsmodels.stats.diagnostic import acorr_ljungbox
 from tabulate import tabulate
 import pandas as pd
@@ -136,7 +134,6 @@ def validarNumeroAleatorio():
 
 def valorCriticoKS(n, nivelSignificancia):
     return stats.ksone.ppf(1 - nivelSignificancia, n)
-    #return kstwobign.ppf(1 - nivelSignificancia) / np.sqrt(n)
 
 def KolmogorovSmirnov(sucesion=None):
     print("\nPrueba de Kolmogorov Smirnov")

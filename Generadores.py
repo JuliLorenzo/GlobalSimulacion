@@ -40,13 +40,6 @@ def cicloCompleto(periodo, m):
     else:
         print("El generador es de ciclo incompleto")
 
-def ValidarModuloPrimo():
-    while True:
-      m = int(input("Ingrese el valor del módulo: "))
-      if isprime(m):
-        return m
-      else:
-        print("Ingrese un numero primo.")
 
 def ValidarModuloEsPrimo(m):
     if isprime(m):
